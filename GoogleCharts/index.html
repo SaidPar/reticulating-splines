@@ -1,0 +1,73 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>Days by Area</title>
+
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="jquery.csv-0.71.js"></script> 
+	
+	<script type="text/javascript">
+		google.load('visualization', '1', { packages: ['corechart']});
+		google.setOnLoadCallback(init);
+
+		function drawAreaByDaysChart() {
+			$.ajax({
+				type: "GET",
+				url: "areasdata.csv",
+				dataType: "text",
+				success: function(data) {
+					dat = $.csv.toArrays(data, {onParseValue: $.csv.hooks.castToScalar});
+
+					var data = new google.visualization.arrayToDataTable(dat);
+
+					var options = {title: "Areas Visited In the Last Year By No. of Days",
+									legend: "none",
+									pieSliceText: "label", 	
+									pieHole: 0.5,
+									width: 500,
+									height: 500	};
+
+					var chart = new google.visualization.PieChart(document.getElementById('chart'));
+					chart.draw(data, options);
+				}
+			});
+		}
+
+		function drawMonthlyBreakdown() {
+			$.ajax({
+				type: "GET",
+				url: "monthlybreakdown.csv",
+				dataType: "text",
+				success: function(data) {
+					dat = $.csv.toArrays(data, {onParseValue: $.csv.hooks.castToScalar});
+
+					var data = new google.visualization.arrayToDataTable(dat);
+
+					var options = {
+						title: "Monthly Breakdown",
+						vAxis: {title: "Days Climbed" },
+						hAxis: {title: "Month" },
+						seriesType: "bars",
+						width: 1500,
+						height: 500
+					};
+
+					var chart = new google.visualization.ComboChart(document.getElementById('combo'));
+					chart.draw(data, options);
+				}
+			});
+		}
+
+		function init() {
+			drawAreaByDaysChart();
+			drawMonthlyBreakdown();	
+		}
+	</script> 
+</head>
+<body>
+	<div id="chart"></div> 
+	<p></p>
+	<div id="combo"></div>
+</body>
+</html>
